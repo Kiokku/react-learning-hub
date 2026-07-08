@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+.AppleDouble
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Dependencies and generated deployment artifacts
+node_modules/
+_site/
+*.log
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Paid or private course materials kept only on this machine
+local-resources/
+course-materials/
+course-downloads/
+downloads/
+*.mp4
+*.m4v
+*.mov
+*.mkv
+*.webm
+*.mp3
+*.m4a

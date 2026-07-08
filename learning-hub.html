@@ -1,0 +1,1187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>React Learning Hub</title>
+  <script>
+    (() => {
+      let savedTheme = null;
+      try { savedTheme = localStorage.getItem('react-learning-hub-theme'); } catch {}
+      const theme = savedTheme === 'light' || savedTheme === 'dark'
+        ? savedTheme
+        : (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #050c11;
+      --surface: #0a1319;
+      --surface-strong: #0e1a21;
+      --text: #f1f4f5;
+      --muted: #8f9ca3;
+      --faint: #52616a;
+      --line: #263640;
+      --line-strong: #3a4d57;
+      --cyan: #35e6f4;
+      --lime: #8cd85a;
+      --blue: #4eb6ff;
+      --amber: #ffbd45;
+      --orange: #ff824c;
+      --header-bg: rgba(5, 12, 17, .94);
+      --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --max: 1180px;
+    }
+    :root[data-theme="light"] {
+      --bg: #f5f8f9;
+      --surface: #edf2f4;
+      --surface-strong: #e2e9ec;
+      --text: #10191e;
+      --muted: #55656d;
+      --faint: #84939a;
+      --line: #c7d3d8;
+      --line-strong: #91a3ab;
+      --cyan: #007d88;
+      --lime: #43871f;
+      --blue: #086da8;
+      --amber: #9a6200;
+      --orange: #b54b1c;
+      --header-bg: rgba(245, 248, 249, .94);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    .shell { width: min(calc(100% - 40px), var(--max)); margin: 0 auto; }
+    .site-header {
+      position: sticky; top: 0; z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: var(--header-bg);
+      backdrop-filter: blur(14px);
+    }
+    .nav { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { font: 700 15px/1 var(--mono); letter-spacing: .06em; white-space: nowrap; }
+    .brand span { color: var(--cyan); }
+    .nav-actions { min-width: 0; display: flex; align-items: center; gap: 26px; }
+    .nav-links { display: flex; align-items: stretch; gap: 30px; min-height: 64px; }
+    .nav-links a { display: grid; place-items: center; color: var(--muted); font-size: 14px; border-bottom: 2px solid transparent; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); border-color: var(--cyan); }
+    .theme-toggle {
+      width: 38px; height: 38px; padding: 0; flex: 0 0 auto;
+      display: grid; place-items: center;
+      color: var(--text); background: transparent;
+      border: 1px solid var(--line-strong); border-radius: 2px;
+      cursor: pointer;
+    }
+    .theme-toggle:hover { color: var(--cyan); border-color: var(--cyan); background: var(--surface); }
+    .theme-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .icon-moon { display: none; }
+    :root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+    :root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+    main > section { scroll-margin-top: 84px; }
+    .hero { padding: 92px 0 68px; border-bottom: 1px solid var(--line); }
+    h1 { margin: 0; max-width: 880px; font-size: clamp(48px, 7.2vw, 92px); line-height: .98; letter-spacing: -.055em; font-weight: 760; }
+    .hero-copy { margin: 28px 0 0; color: var(--muted); font: 17px/1.6 var(--mono); }
+    .hero-grid { margin-top: 72px; display: grid; grid-template-columns: 1fr 1.15fr; gap: 64px; align-items: end; }
+    .label { margin: 0 0 8px; color: var(--muted); font: 12px/1.4 var(--mono); text-transform: uppercase; letter-spacing: .12em; }
+    .current-title { margin: 0 0 22px; color: var(--cyan); font: 600 clamp(24px, 3vw, 34px)/1.25 var(--mono); }
+    .next-action { display: inline-flex; align-items: center; gap: 12px; border: 1px solid var(--cyan); padding: 12px 17px; color: var(--cyan); font: 600 14px/1 var(--mono); }
+    .next-action:hover { background: var(--cyan); color: var(--bg); }
+    .progress-panel { padding-left: 42px; border-left: 1px solid var(--line-strong); }
+    .progress-number { font: 600 17px/1.3 var(--mono); }
+    .progress-number strong { color: var(--cyan); font-size: 24px; }
+    .progress-track { height: 8px; margin: 26px 0 18px; background: var(--surface-strong); overflow: hidden; }
+    .progress-track span { display: block; height: 100%; width: 0%; background: var(--cyan); }
+    .legend { display: flex; flex-wrap: wrap; gap: 10px 22px; color: var(--muted); font: 12px/1.4 var(--mono); }
+    .legend span, .status { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .legend i, .status i { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: 0 0 auto; }
+    .status-理解中 i { background: var(--blue); }
+    .status-实现中 i { background: var(--amber); }
+    .status-待验收 i { background: var(--orange); }
+    .status-已掌握 i, .status-已完成 i { background: var(--lime); }
+    .section { padding: 78px 0; border-bottom: 1px solid var(--line); }
+    .section-heading { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin-bottom: 30px; }
+    h2 { margin: 0; font-size: clamp(30px, 4vw, 46px); line-height: 1.08; letter-spacing: -.035em; }
+    .section-note { margin: 0; max-width: 520px; color: var(--muted); font-size: 14px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 0; margin-bottom: 18px; }
+    .filter { appearance: none; border: 1px solid var(--line); border-right: 0; background: transparent; color: var(--muted); padding: 10px 15px; font: 12px/1 var(--mono); cursor: pointer; }
+    .filter:last-child { border-right: 1px solid var(--line); }
+    .filter:hover, .filter.active { color: var(--cyan); border-color: var(--cyan); }
+    .filter.active + .filter { border-left-color: var(--cyan); }
+    .stage { border: 1px solid var(--line); border-bottom: 0; }
+    .stage:last-child { border-bottom: 1px solid var(--line); }
+    .stage[hidden] { display: none; }
+    .stage summary { min-height: 62px; display: grid; grid-template-columns: 54px minmax(0, 1fr) 110px 52px 18px; gap: 18px; align-items: center; padding: 0 18px; cursor: pointer; list-style: none; }
+    .stage summary::-webkit-details-marker { display: none; }
+    .stage summary:hover { background: var(--surface); }
+    .stage[open] { border-left-color: var(--cyan); }
+    .stage[open] summary { background: var(--surface); border-bottom: 1px solid var(--line); }
+    .stage-index { color: var(--muted); font: 14px/1 var(--mono); }
+    .stage-title { font-weight: 600; }
+    .stage-count { color: var(--muted); font: 12px/1 var(--mono); text-align: right; }
+    summary svg { width: 18px; stroke: var(--muted); fill: none; stroke-width: 1.6; transition: transform .2s ease; }
+    details[open] summary svg { transform: rotate(180deg); }
+    .status { color: var(--muted); font: 12px/1 var(--mono); }
+    .lesson-table { padding: 0 18px 18px; background: var(--surface); }
+    .lesson-head, .lesson-row { display: grid; grid-template-columns: minmax(260px, 1.5fr) 105px minmax(180px, .8fr) minmax(120px, .6fr); gap: 18px; align-items: center; }
+    .lesson-head { min-height: 48px; color: var(--muted); border-bottom: 1px solid var(--line); font: 11px/1.3 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+    .lesson-row { min-height: 72px; border-bottom: 1px solid var(--line); }
+    .lesson-row:last-child { border-bottom: 0; }
+    .lesson-row.is-current { margin: 0 -10px; padding: 0 10px; border: 1px solid var(--cyan); }
+    .lesson-row > div:first-child { display: grid; gap: 4px; }
+    .lesson-row strong { color: var(--cyan); font: 600 12px/1 var(--mono); }
+    .lesson-row > div:first-child span { font-size: 14px; }
+    .source-link { color: var(--muted); font: 12px/1.5 var(--mono); }
+    .source-link:hover, .evidence-links a:hover { color: var(--cyan); }
+    .evidence-links { display: flex; gap: 12px; font: 12px/1.5 var(--mono); }
+    .empty { color: var(--faint); }
+    .metric-strip { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); margin-bottom: 28px; }
+    .metric { padding: 24px; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: 0; }
+    .metric strong { display: block; color: var(--cyan); font: 600 32px/1 var(--mono); }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .evidence-table { border-top: 1px solid var(--line); }
+    .evidence-row { min-height: 58px; display: grid; grid-template-columns: 1fr 110px 150px; gap: 20px; align-items: center; border-bottom: 1px solid var(--line); }
+    .evidence-row > * { min-width: 0; }
+    .evidence-row span { color: var(--muted); font: 12px/1.4 var(--mono); }
+    .evidence-row span:last-child { overflow-wrap: anywhere; }
+    .repo-state { color: var(--muted) !important; }
+    .interview-grid { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--line); }
+    .interview-item { display: flex; justify-content: space-between; gap: 20px; padding: 17px 0; border-bottom: 1px solid var(--line); }
+    .interview-item:nth-child(odd) { padding-right: 28px; border-right: 1px solid var(--line); }
+    .interview-item:nth-child(even) { padding-left: 28px; }
+    .interview-item span { color: var(--muted); font: 12px/1.5 var(--mono); }
+    .resource-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+    h3 { margin: 0 0 18px; font-size: 20px; }
+    .plain-list { border-top: 1px solid var(--line); }
+    .plain-row { display: grid; grid-template-columns: minmax(140px, .7fr) 1.3fr; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .plain-row strong, .plain-row a { color: var(--cyan); font: 600 12px/1.5 var(--mono); }
+    .plain-row p { margin: 0; color: var(--muted); font-size: 13px; }
+    .plain-row small { display: block; margin-top: 7px; color: var(--faint); }
+    footer { padding: 30px 0 48px; color: var(--faint); font: 11px/1.6 var(--mono); }
+    @media (max-width: 820px) {
+      .shell { width: min(calc(100% - 28px), var(--max)); }
+      .nav { min-height: 56px; }
+      .nav-links { display: none; }
+      .nav-actions { gap: 0; }
+      .theme-toggle { width: 36px; height: 36px; }
+      .hero { padding: 66px 0 48px; }
+      .hero-grid { margin-top: 48px; grid-template-columns: 1fr; gap: 34px; }
+      .progress-panel { padding: 28px 0 0; border-left: 0; border-top: 1px solid var(--line-strong); }
+      .section { padding: 58px 0; }
+      .section-heading { align-items: start; flex-direction: column; }
+      .stage summary { grid-template-columns: 40px minmax(0, 1fr) 18px; gap: 10px; padding: 0 12px; }
+      .stage summary .status, .stage-count { display: none; }
+      .lesson-head { display: none; }
+      .lesson-row { grid-template-columns: 1fr auto; padding: 16px 0; gap: 12px; }
+      .lesson-row .source-link, .lesson-row .evidence-links { grid-column: 1 / -1; }
+      .lesson-row.is-current { padding: 15px 10px; }
+      .metric-strip { grid-template-columns: repeat(2, 1fr); }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .evidence-row { grid-template-columns: 1fr auto; }
+      .evidence-row span:last-child { grid-column: 1 / -1; }
+      .interview-grid, .resource-grid { grid-template-columns: 1fr; gap: 50px; }
+      .interview-item:nth-child(n) { padding-left: 0; padding-right: 0; border-right: 0; }
+      .plain-row { grid-template-columns: 1fr; gap: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } summary svg { transition: none; } }
+    @media print {
+      :root, :root[data-theme] { --bg: #fff; --surface: #fff; --surface-strong: #eee; --text: #111; --muted: #555; --faint: #777; --line: #bbb; --line-strong: #777; --cyan: #007b8a; }
+      .site-header, .filters, .next-action, .theme-toggle { display: none; }
+      .hero, .section { padding: 28px 0; }
+      details { break-inside: avoid; }
+      details > * { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell nav">
+      <a class="brand" href="#overview"><span>REACT</span> / LEARNING HUB</a>
+      <div class="nav-actions">
+        <nav class="nav-links" aria-label="主导航">
+          <a class="active" href="#overview">总览</a>
+          <a href="#roadmap">学习路线</a>
+          <a href="#evidence">学习成果</a>
+          <a href="#interview">面试题</a>
+          <a href="#resources">术语与资源</a>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换主题" title="切换主题">
+          <svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+          <svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="hero" id="overview">
+      <div class="shell">
+        <h1>从实现中理解 React</h1>
+        <p class="hero-copy">React 18 深度实现 · React 19/19.2 差异理解</p>
+        <div class="hero-grid">
+          <div>
+            <p class="label">当前学习</p>
+            <p class="current-title">阶段 00 · 准备与方法建立</p>
+            <p class="label">下一步动作</p>
+            <a class="next-action" href="#roadmap">→ 开始 S00-L01</a>
+          </div>
+          <div class="progress-panel">
+            <div class="progress-number"><strong>0</strong> / 16 阶段已掌握</div>
+            <div class="progress-track" aria-label="总体进度 0%"><span></span></div>
+            <div class="legend">
+              <span class="status status-未开始"><i></i>未开始</span><span class="status status-理解中"><i></i>理解中</span><span class="status status-实现中"><i></i>实现中</span><span class="status status-待验收"><i></i>待验收</span><span class="status status-已掌握"><i></i>已掌握</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="roadmap">
+      <div class="shell">
+        <div class="section-heading">
+          <div><p class="label">Curriculum</p><h2>学习路线</h2></div>
+          <p class="section-note">通过亲手实现可运行的 mini React，建立对 React 18 核心机制的可解释心智模型，并理解 React 19/19.2 的关键差异，形成高级前端面试中的 React 专项能力。</p>
+        </div>
+        <div class="filters" aria-label="按阶段状态筛选">
+          <button class="filter active" type="button" data-filter="全部">全部</button><button class="filter " type="button" data-filter="未开始">未开始</button><button class="filter " type="button" data-filter="理解中">理解中</button><button class="filter " type="button" data-filter="实现中">实现中</button><button class="filter " type="button" data-filter="待验收">待验收</button><button class="filter " type="button" data-filter="已掌握">已掌握</button>
+        </div>
+        <div id="stage-list">
+  <details class="stage" data-status="未开始" open>
+    <summary>
+      <span class="stage-index">00</span>
+      <span class="stage-title">准备与方法建立</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/2</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="准备与方法建立 Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row is-current" role="row">
+          <div>
+            <strong>S00-L01</strong>
+            <span>学习系统与课程架构</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">001</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S00-L02</strong>
+            <span>mini React 包结构与开发环境</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">002</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">01</span>
+      <span class="stage-title">JSX 与 ReactElement</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/3</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="JSX 与 ReactElement Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S01-L01</strong>
+            <span>JSX 编译结果与 JSX Runtime</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">003、004</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S01-L02</strong>
+            <span>ReactElement 数据结构与调试</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">005</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S01-L03</strong>
+            <span>JSX 测试方法与行为边界</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">019、020</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">02</span>
+      <span class="stage-title">Reconciler 架构与首次更新入口</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/2</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="Reconciler 架构与首次更新入口 Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S02-L01</strong>
+            <span>Reconciler 职责与 Fiber 根节点模型</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">006</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S02-L02</strong>
+            <span>Update Queue 与首次更新入口</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">007、008</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">03</span>
+      <span class="stage-title">mount 流程与首屏渲染</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/3</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="mount 流程与首屏渲染 Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S03-L01</strong>
+            <span>mount render：beginWork 与 completeWork</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">009、010</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S03-L02</strong>
+            <span>commit 与 Mutation 子阶段</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">011、012</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S03-L03</strong>
+            <span>ReactDOM 接入与首屏链路调试</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">013、014</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">04</span>
+      <span class="stage-title">FunctionComponent 与 Hooks 基础</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/2</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="FunctionComponent 与 Hooks 基础 Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S04-L01</strong>
+            <span>FunctionComponent 执行模型</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">015、016</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S04-L02</strong>
+            <span>Hook 链表与 mountState</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">017、018</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">05</span>
+      <span class="stage-title">update 流程与 useState 更新</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/3</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="update 流程与 useState 更新 Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S05-L01</strong>
+            <span>双缓存树与 update render</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">021</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S05-L02</strong>
+            <span>update commit 与宿主变更</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">022</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S05-L03</strong>
+            <span>Hook Queue 与 useState 状态计算</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">023</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">06</span>
+      <span class="stage-title">事件系统</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/1</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="事件系统 Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S06-L01</strong>
+            <span>事件委托、收集、派发与更新入口</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">024</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">07</span>
+      <span class="stage-title">Diff 与 Fragment</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/3</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="Diff 与 Fragment Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S07-L01</strong>
+            <span>单节点 Diff 与复用条件</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">025</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S07-L02</strong>
+            <span>多节点 Diff、key 与移动</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">026</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S07-L03</strong>
+            <span>Diff Commit 与 Fragment</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">027、028</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">08</span>
+      <span class="stage-title">批处理、Lane 与调度</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/2</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="批处理、Lane 与调度 Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S08-L01</strong>
+            <span>批处理语义与 Lane 模型</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">029、030</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S08-L02</strong>
+            <span>调度阶段与更新流程改造</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">031、032</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">09</span>
+      <span class="stage-title">useEffect 与测试渲染器</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/3</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="useEffect 与测试渲染器 Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S09-L01</strong>
+            <span>Effect 数据结构与执行流程</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">033、034</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S09-L02</strong>
+            <span>Noop Renderer 与渲染器抽象</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">035、036</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S09-L03</strong>
+            <span>useEffect 行为测试</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">037</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">10</span>
+      <span class="stage-title">并发更新与 useTransition</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/4</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="并发更新与 useTransition Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S10-L01</strong>
+            <span>同步渲染与并发渲染对照</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">038、039</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S10-L02</strong>
+            <span>并发交互与调度策略</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">040、041</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S10-L03</strong>
+            <span>并发状态计算与更新重放</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">042</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S10-L04</strong>
+            <span>useTransition 原理与实现</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">043、044</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">11</span>
+      <span class="stage-title">useRef 与 Context</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/3</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="useRef 与 Context Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S11-L01</strong>
+            <span>useRef 的稳定可变容器</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">045</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S11-L02</strong>
+            <span>Context 数据结构与传播</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">046、047</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S11-L03</strong>
+            <span>useContext 与 Fiber 遍历</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">048</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">12</span>
+      <span class="stage-title">Suspense 与 use</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/4</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="Suspense 与 use Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S12-L01</strong>
+            <span>Suspense 的问题边界与实现思路</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">049、050</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S12-L02</strong>
+            <span>Suspense 工作流与触发方式</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">051、052</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S12-L03</strong>
+            <span>use、Thenable 与 unwind</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">053、054</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S12-L04</strong>
+            <span>Suspense 完整链路</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">055</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">13</span>
+      <span class="stage-title">性能优化策略</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/5</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="性能优化策略 Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S13-L01</strong>
+            <span>性能成本模型与优化策略</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">056、057</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S13-L02</strong>
+            <span>Bailout 条件与子树复用</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">058、059</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S13-L03</strong>
+            <span>eagerState 与提前跳过调度</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">060</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S13-L04</strong>
+            <span>React.memo、useMemo 与 useCallback</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">061、062</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S13-L05</strong>
+            <span>Context 与 Bailout 协作</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">063</a>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">14</span>
+      <span class="stage-title">React 19/19.2 关键差异</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/6</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="React 19/19.2 关键差异 Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S14-L01</strong>
+            <span>use 与 Suspense 数据读取</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <span>React 19 官方文档</span>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S14-L02</strong>
+            <span>Actions 与 useActionState</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <span>React 19 官方文档</span>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S14-L03</strong>
+            <span>useOptimistic 与 useFormStatus</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <span>React 19 官方文档</span>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S14-L04</strong>
+            <span>ref 作为 prop</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <span>React 19 官方文档</span>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S14-L05</strong>
+            <span>useEffectEvent 与 Activity</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <span>React 19.2 官方文档</span>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S14-L06</strong>
+            <span>React 18、19 与 19.2 面试对比</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <span>阶段 0 至阶段 14</span>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details>
+  <details class="stage" data-status="未开始" >
+    <summary>
+      <span class="stage-index">15</span>
+      <span class="stage-title">总复盘与面试化</span>
+      <span class="status status-未开始"><i></i>未开始</span>
+      <span class="stage-count">0/3</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
+    </summary>
+    <div class="lesson-table" role="table" aria-label="总复盘与面试化 Lessons">
+      <div class="lesson-head" role="row">
+        <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
+      </div>
+
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S15-L01</strong>
+            <span>五条核心链路闭卷重建</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <span>阶段 1 至阶段 13</span>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S15-L02</strong>
+            <span>mini React 集成测试与公开说明</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <span>mini-react18</span>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+        <div class="lesson-row " role="row">
+          <div>
+            <strong>S15-L03</strong>
+            <span>React 专项模拟面试与答案修订</span>
+          </div>
+          <span class="status status-未开始"><i></i>未开始</span>
+          <span>面试题库</span>
+          <div class="evidence-links">
+            <span class="empty">—</span>
+            <span class="empty">—</span>
+          </div>
+        </div>
+    </div>
+  </details></div>
+      </div>
+    </section>
+
+    <section class="section" id="evidence">
+      <div class="shell">
+        <div class="section-heading">
+          <div><p class="label">Evidence</p><h2>掌握证据</h2></div>
+          <p class="section-note">课程看完不等于掌握。实现、测试和追问记录共同构成证据。</p>
+        </div>
+        <div class="metric-strip">
+          <div class="metric"><strong>0</strong><span>已完成 Lesson / 49</span></div>
+          <div class="metric"><strong>0</strong><span>教学 Lesson</span></div>
+          <div class="metric"><strong>0</strong><span>Learning Records</span></div>
+          <div class="metric"><strong>46</strong><span>面试问题</span></div>
+        </div>
+        <div class="evidence-table">
+          <div class="evidence-row"><strong>Lesson</strong><span>0 项</span><span>lessons/ 暂无成果</span></div><div class="evidence-row"><strong>Notes</strong><span>0 项</span><span>notes/ 暂无成果</span></div><div class="evidence-row"><strong>Learning Records</strong><span>0 项</span><span>learning-records/ 暂无成果</span></div><div class="evidence-row"><strong>Reference</strong><span>0 项</span><span>reference/ 暂无成果</span></div>
+          <div class="evidence-row"><strong>mini-react18 实现仓库</strong><span class="repo-state">待创建</span><span>/Users/mow/Documents/Projects/mini-react18</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="interview">
+      <div class="shell">
+        <div class="section-heading">
+          <div><p class="label">Interview</p><h2>面试准备</h2></div>
+          <p class="section-note">题库按机制持续积累；最终目标是 1 分钟回答、3 分钟回答和两轮追问都能成立。</p>
+        </div>
+        <div class="interview-grid">
+          <div class="interview-item"><strong>JSX 与 ReactElement</strong><span>3 题</span></div><div class="interview-item"><strong>Reconciler 与 Update Queue</strong><span>3 题</span></div><div class="interview-item"><strong>Render 与 Commit</strong><span>3 题</span></div><div class="interview-item"><strong>FunctionComponent 与 Hooks</strong><span>3 题</span></div><div class="interview-item"><strong>Update 流程</strong><span>3 题</span></div><div class="interview-item"><strong>事件系统</strong><span>3 题</span></div><div class="interview-item"><strong>Diff 与 Fragment</strong><span>4 题</span></div><div class="interview-item"><strong>Lane 与调度</strong><span>4 题</span></div><div class="interview-item"><strong>Effect</strong><span>4 题</span></div><div class="interview-item"><strong>并发渲染与 Transition</strong><span>4 题</span></div><div class="interview-item"><strong>useRef 与 Context</strong><span>3 题</span></div><div class="interview-item"><strong>Suspense 与 use</strong><span>4 题</span></div><div class="interview-item"><strong>性能优化</strong><span>5 题</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="resources">
+      <div class="shell">
+        <div class="section-heading">
+          <div><p class="label">Reference</p><h2>术语与资源</h2></div>
+          <p class="section-note">统一语言，优先使用课程、React 官方文档和官方源码。</p>
+        </div>
+        <div class="resource-grid">
+          <div>
+            <h3>项目术语</h3>
+            <div class="plain-list">
+              <div class="plain-row"><strong>React 专项面试能力</strong><p>能够结合最小实现，解释 React 18 的核心数据结构、渲染与更新链路、常用 Hooks 和并发机制，并应对相关追问。不代表覆盖高级前端工程师的完整能力模型。<small>避免：高级前端完整面试能力、高级 React 工程师完整能力</small></p></div><div class="plain-row"><strong>阶段掌握</strong><p>不看课程独立完成该阶段的最小实现，以测试证明关键行为，并能脱离笔记讲清主链路、通过两轮追问。三项缺一不可。<small>避免：看完课程、跟写完成、代码能运行</small></p></div><div class="plain-row"><strong>学习阶段</strong><p>`roadmap.md` 中围绕一组相关 React 机制组织的课程容器。一个阶段可以包含多个 Lesson，不直接等同于一节课。<small>避免：Lesson、单个课程视频</small></p></div><div class="plain-row"><strong>Lesson</strong><p>一次 `teach` 教学的最小单元，围绕一个可独立练习和验证的 React 机制展开，通常关联一至三节课程视频。<small>避免：学习阶段、课程视频</small></p></div><div class="plain-row"><strong>阶段验收</strong><p>学习阶段结束后的综合验证，统一执行闭卷最小实现、关键行为测试和两轮模拟面试。通过阶段验收才算达到阶段掌握。<small>避免：Lesson 完成、课程看完</small></p></div><div class="plain-row"><strong>课程范围</strong><p>`roadmap.md` 当前列出的 React 18 机制、课程和面试主题，以及一个 React 19/19.2 差异阶段。React 18 内容要求深度实现；新增版本差异侧重原理、用法、Demo 和面试对比。<small>避免：React Hooks 全覆盖、React 19 全量源码实现</small></p></div><div class="plain-row"><strong>React 19/19.2 差异阶段</strong><p>覆盖 `use`、Actions、`useActionState`、`useOptimistic`、`useFormStatus`、ref 作为 prop、`useEffectEvent`、`&lt;Activity /&gt;` 及 React 18/19 面试对比。不覆盖 React Server Components 基础设施、SSR 实现和 React Compiler。<small>避免：React 19 全量学习、React 19 源码重写</small></p></div><div class="plain-row"><strong>理解日</strong><p>一个 60 分钟学习单元，用于课前预测、学习资料、构建主链路、完成 Quiz，并写出后续实现的测试目标。<small>避免：实现日、看完一节视频</small></p></div><div class="plain-row"><strong>实现日</strong><p>一个最长 90 分钟学习单元，用于先写测试、闭卷实现、对照课程、记录偏差并形成面试表达。<small>避免：理解日、跟写代码</small></p></div><div class="plain-row"><strong>React Learning Hub</strong><p>学习工作区的 HTML 总览页，展示阶段、Lesson、学习记录和参考资料。仓库文件是唯一数据源，页面不单独维护一份浏览器进度。<small>避免：课程播放器、仅存于 localStorage 的进度页</small></p></div><div class="plain-row"><strong>学习状态</strong><p>Lesson 在 `未开始 → 理解中 → 实现中 → 已完成` 之间推进。阶段根据 Lesson 聚合为 `未开始、理解中、实现中`；全部 Lesson 完成后进入 `待验收`，只有通过阶段验收才能进入 `已掌握`。<small>避免：已看完、代码已跟写</small></p></div><div class="plain-row"><strong>学习仓库</strong><p>当前项目，保存 Mission、Roadmap、Lesson、Notes、Learning Record、进度和 React Learning Hub，不承载 mini React 实现源码。<small>避免：实现仓库、课程代码仓库</small></p></div><div class="plain-row"><strong>实现仓库</strong><p>独立且可公开发布的 mini React 代码仓库，保存实现、测试和公开文档；学习仓库只引用其提交或成果链接。<small>避免：学习仓库、课程配套仓库</small></p></div>
+            </div>
+          </div>
+          <div>
+            <h3>可信资源</h3>
+            <div class="plain-list">
+              <div class="plain-row"><a href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">课程：《从0实现 React18》 ↗</a><p>63 期付费视频课程，是 `roadmap.md` 的 React 18 实现主线。视频需要在已购买并登录的账号中观看。</p></div><div class="plain-row"><a href="https://github.com/BetaSu/big-react">课程配套实现：BetaSu/big-react ↗</a><p>课程作者公开的配套实现。用于课后对照设计和实现偏差，不作为闭卷实现时的代码来源。</p></div><div class="plain-row"><a href="https://github.com/facebook/react">React 官方源码 ↗</a><p>核对真实数据结构、调用链和版本差异的第一手资料。React 18 阶段应固定到对应版本 tag，避免混入后续实现。</p></div><div class="plain-row"><a href="https://18.react.dev/">React 18 官方文档 ↗</a><p>核对 React 18 API 行为、Hooks 用法和并发特性的官方资料。</p></div><div class="plain-row"><a href="https://react.dev/blog/2025/10/01/react-19-2">React 19.2 官方发布说明 ↗</a><p>React 19/19.2 差异阶段的版本边界和新增能力清单。</p></div><div class="plain-row"><a href="https://react.dev/reference/react">React 官方 API Reference ↗</a><p>核对 React 19/19.2 Hooks 与组件行为的当前官方参考。</p></div><div class="plain-row"><a href="https://github.com/reactjs/react.dev/discussions">React GitHub Discussions ↗</a><p>用于核对文档问题和真实使用场景；只在课程、官方文档与源码仍无法解释问题时使用。</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="shell">由仓库文件生成 · 2026/7/8 23:52:11 · 学习进度来自仓库，localStorage 仅保存主题偏好</div>
+  </footer>
+  <script>
+    const themeKey = 'react-learning-hub-theme';
+    const themeToggle = document.querySelector('[data-theme-toggle]');
+    const setTheme = (theme, persist = false) => {
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+      const nextLabel = theme === 'dark' ? '浅色' : '深色';
+      themeToggle.setAttribute('aria-label', '切换到' + nextLabel + '模式');
+      themeToggle.setAttribute('title', '切换到' + nextLabel + '模式');
+      themeToggle.setAttribute('aria-pressed', String(theme === 'light'));
+      if (persist) {
+        try { localStorage.setItem(themeKey, theme); } catch {}
+      }
+    };
+    setTheme(document.documentElement.dataset.theme);
+    themeToggle.addEventListener('click', () => {
+      setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark', true);
+    });
+    const filters = [...document.querySelectorAll('.filter')];
+    const stages = [...document.querySelectorAll('.stage')];
+    filters.forEach((button) => button.addEventListener('click', () => {
+      filters.forEach((item) => item.classList.toggle('active', item === button));
+      const filter = button.dataset.filter;
+      stages.forEach((stage) => { stage.hidden = filter !== '全部' && stage.dataset.status !== filter; });
+    }));
+    const sections = [...document.querySelectorAll('main > section[id]')];
+    const navLinks = [...document.querySelectorAll('.nav-links a')];
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        navLinks.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === '#' + visible.target.id));
+      }, { rootMargin: '-20% 0px -65% 0px', threshold: [0, .25, .6] });
+      sections.forEach((section) => observer.observe(section));
+    }
+  </script>
+</body>
+</html>
