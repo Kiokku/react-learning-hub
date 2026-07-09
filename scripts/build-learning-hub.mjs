@@ -286,18 +286,19 @@ const html = `<!doctype html>
     .nav-links { display: flex; align-items: stretch; gap: 30px; min-height: 64px; }
     .nav-links a { display: grid; place-items: center; color: var(--muted); font-size: 14px; border-bottom: 2px solid transparent; }
     .nav-links a:hover, .nav-links a.active { color: var(--text); border-color: var(--cyan); }
-    .theme-toggle {
+    .repo-link, .theme-toggle {
       width: 38px; height: 38px; padding: 0; flex: 0 0 auto;
       display: grid; place-items: center;
       color: var(--text); background: transparent;
       border: 1px solid var(--line-strong); border-radius: 2px;
       cursor: pointer;
     }
-    .theme-toggle:hover { color: var(--cyan); border-color: var(--cyan); background: var(--surface); }
+    .repo-link:hover, .theme-toggle:hover { color: var(--cyan); border-color: var(--cyan); background: var(--surface); }
+    .repo-link svg { width: 18px; height: 18px; fill: currentColor; }
     .theme-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-    .theme-toggle .icon-moon { display: none; }
-    :root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
-    :root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+    .theme-toggle .icon-sun { display: none; }
+    :root[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+    :root[data-theme="light"] .theme-toggle .icon-moon { display: none; }
     main > section { scroll-margin-top: 84px; }
     .hero { padding: 92px 0 68px; border-bottom: 1px solid var(--line); }
     h1 { margin: 0; max-width: 880px; font-size: clamp(48px, 7.2vw, 92px); line-height: .98; letter-spacing: -.055em; font-weight: 760; }
@@ -384,7 +385,7 @@ const html = `<!doctype html>
       .nav { min-height: 56px; }
       .nav-links { display: none; }
       .nav-actions { gap: 0; }
-      .theme-toggle { width: 36px; height: 36px; }
+      .repo-link, .theme-toggle { width: 36px; height: 36px; }
       .hero { padding: 66px 0 48px; }
       .hero-grid { margin-top: 48px; grid-template-columns: 1fr; gap: 34px; }
       .progress-panel { padding: 28px 0 0; border-left: 0; border-top: 1px solid var(--line-strong); }
@@ -408,7 +409,7 @@ const html = `<!doctype html>
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } summary svg { transition: none; } }
     @media print {
       :root, :root[data-theme] { --bg: #fff; --surface: #fff; --surface-strong: #eee; --text: #111; --muted: #555; --faint: #777; --line: #bbb; --line-strong: #777; --cyan: #007b8a; }
-      .site-header, .filters, .next-action, .theme-toggle { display: none; }
+      .site-header, .filters, .next-action, .repo-link, .theme-toggle { display: none; }
       .hero, .section { padding: 28px 0; }
       details { break-inside: avoid; }
       details > * { display: block !important; }
@@ -427,6 +428,9 @@ const html = `<!doctype html>
           <a href="#interview">面试题</a>
           <a href="#resources">术语与资源</a>
         </nav>
+        <a class="repo-link" href="https://github.com/Kiokku/react-learning-hub" target="_blank" rel="noopener noreferrer" aria-label="打开 react-learning-hub GitHub 仓库" title="GitHub 仓库">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.1.79-.25.79-.56v-2.03c-3.2.7-3.88-1.37-3.88-1.37-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.75 1.18 1.75 1.18 1.02 1.74 2.67 1.24 3.32.95.1-.74.4-1.24.72-1.53-2.55-.29-5.23-1.28-5.23-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.17.92-.25 1.9-.38 2.88-.39.98 0 1.96.14 2.88.39 2.2-1.48 3.16-1.17 3.16-1.17.62 1.58.23 2.75.11 3.04.73.8 1.18 1.83 1.18 3.08 0 4.41-2.69 5.39-5.25 5.67.41.36.77 1.06.77 2.13v3.15c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        </a>
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换主题" title="切换主题">
           <svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
           <svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/></svg>
@@ -533,10 +537,11 @@ const html = `<!doctype html>
     const setTheme = (theme, persist = false) => {
       document.documentElement.dataset.theme = theme;
       document.documentElement.style.colorScheme = theme;
+      const currentLabel = theme === 'dark' ? '深色' : '浅色';
       const nextLabel = theme === 'dark' ? '浅色' : '深色';
-      themeToggle.setAttribute('aria-label', '切换到' + nextLabel + '模式');
-      themeToggle.setAttribute('title', '切换到' + nextLabel + '模式');
-      themeToggle.setAttribute('aria-pressed', String(theme === 'light'));
+      themeToggle.setAttribute('aria-label', '当前为' + currentLabel + '模式，切换到' + nextLabel + '模式');
+      themeToggle.setAttribute('title', '当前为' + currentLabel + '模式，切换到' + nextLabel + '模式');
+      themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
       if (persist) {
         try { localStorage.setItem(themeKey, theme); } catch {}
       }
