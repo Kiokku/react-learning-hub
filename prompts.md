@@ -11,6 +11,22 @@ NotebookLM 的完整五步模板见 [`templates/notebooklm-learning-template.md`
 课程视频前先做诊断；不要生成完整 mini React 实现。
 ```
 
+## S00-L02 环境搭建 Prompt
+
+```text
+使用 teach 进行 S00-L02「mini React monorepo 项目架构与开发环境」的课前诊断。
+
+请围绕以下主题各问我一个问题：
+1. monorepo 的目录与包边界
+2. lint、tsc、代码风格、commit 规范分别解决什么问题
+3. 打包工具的选择标准
+4. 如何证明环境可用
+
+根据我的回答，只给出下一步最小验证目标。
+不要讲解 react、react-dom、react-reconciler 的内部职责，
+不要直接生成完整脚手架或配置。
+```
+
 ## Agent 提示 Prompt
 
 ```text

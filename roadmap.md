@@ -10,8 +10,8 @@
 
 ### 计划 Lessons
 
-- **S00-L01** 学习系统与课程架构（课程：001）
-- **S00-L02** mini React 包结构与开发环境（课程：002）
+- **S00-L01** 学习系统与课程架构（课程：001「课程介绍」）
+- **S00-L02** mini React monorepo 项目架构与开发环境（课程：002「搭建项目架构」）
 
 对应课程：
 
@@ -20,23 +20,24 @@
 
 重点：
 
-- 理解课程项目为什么要拆成类似 React 官方源码的包结构。
-- 搭好运行、调试、测试、打包环境。
+- 定义 mini React 的 monorepo 项目结构。
+- 建立 lint、commit、TypeScript 与代码风格规范。
+- 选择打包工具，并搭好运行、调试、测试环境。
 - 建立固定笔记流程：概念、架构、伪代码、实现差异、面试问答。
 
 完成标准：
 
-- 能解释 `react`、`react-dom`、`react-reconciler` 的职责。
-- 能跑通初始 demo 或测试。
-- 能说明为什么学习 React 源码要按包职责理解。
+- 能说明 monorepo 的目录结构与各项开发规范的目的。
+- 能执行 lint、类型检查和代码风格检查，并按约定提交代码。
+- 已选定打包工具，且能跑通初始 demo 或测试。
 
 ## 阶段 1：JSX 与 ReactElement
 
 ### 计划 Lessons
 
-- **S01-L01** JSX 编译结果与 JSX Runtime（课程：003、004）
-- **S01-L02** ReactElement 数据结构与调试（课程：005）
-- **S01-L03** JSX 测试方法与行为边界（课程：019、020）
+- **S01-L01** JSX 编译结果与 JSX Runtime（课程：003「2-1」实现 JSX、004「2-2」实现 JSX 的打包）
+- **S01-L02** ReactElement 数据结构与调试（课程：005「2-3」实现第一种调试方式）
+- **S01-L03** JSX 测试方法与行为边界（课程：019「9-1」实现第三种调试方式、020「9-2」测试 JSX）
 
 对应课程：
 
@@ -51,6 +52,7 @@
 - JSX 会被编译为 `jsx/jsxs` 调用。
 - ReactElement 保存 `type`、`key`、`ref`、`props`。
 - `key` 和 `ref` 不是普通 props。
+- 结合 JSX Runtime，初步理解 `react`、`react-dom`、`react-reconciler` 的职责、边界和依赖关系。
 
 实现产出：
 
@@ -67,8 +69,8 @@
 
 ### 计划 Lessons
 
-- **S02-L01** Reconciler 职责与 Fiber 根节点模型（课程：006）
-- **S02-L02** Update Queue 与首次更新入口（课程：007、008）
+- **S02-L01** Reconciler 职责与 Fiber 根节点模型（课程：006「3」实现 Reconciler 架构）
+- **S02-L02** Update Queue 与首次更新入口（课程：007「4-1」实现状态更新机制、008「4-2」接入状态更新机制）
 
 对应课程：
 
@@ -92,9 +94,9 @@
 
 ### 计划 Lessons
 
-- **S03-L01** mount render：beginWork 与 completeWork（课程：009、010）
-- **S03-L02** commit 与 Mutation 子阶段（课程：011、012）
-- **S03-L03** ReactDOM 接入与首屏链路调试（课程：013、014）
+- **S03-L01** mount render：beginWork 与 completeWork（课程：009「5-1」实现 mount 流程的 beginWork、010「5-2」实现 mount 流程的 completeWork）
+- **S03-L02** commit 与 Mutation 子阶段（课程：011「6-1」实现 commit 阶段、012「6-2」实现 Mutation 子阶段）
+- **S03-L03** ReactDOM 接入与首屏链路调试（课程：013「6-3」实现 ReactDOM、014「6-4」调试 ReactDOM）
 
 对应课程：
 
@@ -125,8 +127,8 @@
 
 ### 计划 Lessons
 
-- **S04-L01** FunctionComponent 执行模型（课程：015、016）
-- **S04-L02** Hook 链表与 mountState（课程：017、018）
+- **S04-L01** FunctionComponent 执行模型（课程：015「7-1」实现 FunctionComponent、016「7-2」实现第二种调试方式）
+- **S04-L02** Hook 链表与 mountState（课程：017「8-1」实现 Hooks 架构、018「8-2」实现 useState）
 
 对应课程：
 
@@ -155,9 +157,9 @@
 
 ### 计划 Lessons
 
-- **S05-L01** 双缓存树与 update render（课程：021）
-- **S05-L02** update commit 与宿主变更（课程：022）
-- **S05-L03** Hook Queue 与 useState 状态计算（课程：023）
+- **S05-L01** 双缓存树与 update render（课程：021「10-1」update 流程 render 阶段）
+- **S05-L02** update commit 与宿主变更（课程：022「10-2」update 流程 commit 阶段）
+- **S05-L03** Hook Queue 与 useState 状态计算（课程：023「10-3」update 流程处理 useState）
 
 对应课程：
 
@@ -181,7 +183,7 @@
 
 ### 计划 Lessons
 
-- **S06-L01** 事件委托、收集、派发与更新入口（课程：024）
+- **S06-L01** 事件委托、收集、派发与更新入口（课程：024「11」实现事件系统）
 
 对应课程：
 
@@ -203,9 +205,9 @@
 
 ### 计划 Lessons
 
-- **S07-L01** 单节点 Diff 与复用条件（课程：025）
-- **S07-L02** 多节点 Diff、key 与移动（课程：026）
-- **S07-L03** Diff Commit 与 Fragment（课程：027、028）
+- **S07-L01** 单节点 Diff 与复用条件（课程：025「12-1」实现单节点 Diff）
+- **S07-L02** 多节点 Diff、key 与移动（课程：026「12-2」实现多节点 Diff）
+- **S07-L03** Diff Commit 与 Fragment（课程：027「12-3」Diff 算法处理 commit 阶段、028「13」实现 Fragment）
 
 对应课程：
 
@@ -231,8 +233,8 @@
 
 ### 计划 Lessons
 
-- **S08-L01** 批处理语义与 Lane 模型（课程：029、030）
-- **S08-L02** 调度阶段与更新流程改造（课程：031、032）
+- **S08-L01** 批处理语义与 Lane 模型（课程：029「14-1」批处理的概念、030「14-2」实现 Lane 模型）
+- **S08-L02** 调度阶段与更新流程改造（课程：031「14-3」实现调度阶段、032「14-4」改造更新流程）
 
 对应课程：
 
@@ -258,9 +260,9 @@
 
 ### 计划 Lessons
 
-- **S09-L01** Effect 数据结构与执行流程（课程：033、034）
-- **S09-L02** Noop Renderer 与渲染器抽象（课程：035、036）
-- **S09-L03** useEffect 行为测试（课程：037）
+- **S09-L01** Effect 数据结构与执行流程（课程：033「15-1」实现 useEffect 数据结构、034「15-2」实现 useEffect 工作流程）
+- **S09-L02** Noop Renderer 与渲染器抽象（课程：035「16-1」实现 noop-renderer、036「16-2」打包 noop-renderer）
+- **S09-L03** useEffect 行为测试（课程：037「16-3」测试 useEffect）
 
 对应课程：
 
@@ -287,10 +289,10 @@
 
 ### 计划 Lessons
 
-- **S10-L01** 同步渲染与并发渲染对照（课程：038、039）
-- **S10-L02** 并发交互与调度策略（课程：040、041）
-- **S10-L03** 并发状态计算与更新重放（课程：042）
-- **S10-L04** useTransition 原理与实现（课程：043、044）
+- **S10-L01** 同步渲染与并发渲染对照（课程：038「17-1」实现同步更新 Demo、039「17-2」实现并发更新 Demo）
+- **S10-L02** 并发交互与调度策略（课程：040「18-1」实现并发更新的交互部分、041「18-2」实现并发更新的策略逻辑）
+- **S10-L03** 并发状态计算与更新重放（课程：042「18-3」实现并发更新的状态计算）
+- **S10-L04** useTransition 原理与实现（课程：043「19-1」useTransition 的作用、044「19-2」实现 useTransition）
 
 对应课程：
 
@@ -319,9 +321,9 @@
 
 ### 计划 Lessons
 
-- **S11-L01** useRef 的稳定可变容器（课程：045）
-- **S11-L02** Context 数据结构与传播（课程：046、047）
-- **S11-L03** useContext 与 Fiber 遍历（课程：048）
+- **S11-L01** useRef 的稳定可变容器（课程：045「20」实现 useRef）
+- **S11-L02** Context 数据结构与传播（课程：046「21-1」实现 Context 数据结构、047「21-2」实现 Context 逻辑）
+- **S11-L03** useContext 与 Fiber 遍历（课程：048「21-3」实现 useContext）
 
 对应课程：
 
@@ -346,10 +348,10 @@
 
 ### 计划 Lessons
 
-- **S12-L01** Suspense 的问题边界与实现思路（课程：049、050）
-- **S12-L02** Suspense 工作流与触发方式（课程：051、052）
-- **S12-L03** use、Thenable 与 unwind（课程：053、054）
-- **S12-L04** Suspense 完整链路（课程：055）
+- **S12-L01** Suspense 的问题边界与实现思路（课程：049「22-1」Suspense 的作用、050「22-2」Suspense 的实现思路）
+- **S12-L02** Suspense 工作流与触发方式（课程：051「22-3」实现 Suspense 工作流程、052「22-4」如何触发 Suspense？）
+- **S12-L03** use、Thenable 与 unwind（课程：053「22-5」实现试验性 hook —— use、054「22-6」实现 unwind 流程）
+- **S12-L04** Suspense 完整链路（课程：055「22-7」完善 Suspense）
 
 对应课程：
 
@@ -378,11 +380,11 @@
 
 ### 计划 Lessons
 
-- **S13-L01** 性能成本模型与优化策略（课程：056、057）
-- **S13-L02** Bailout 条件与子树复用（课程：058、059）
-- **S13-L03** eagerState 与提前跳过调度（课程：060）
-- **S13-L04** React.memo、useMemo 与 useCallback（课程：061、062）
-- **S13-L05** Context 与 Bailout 协作（课程：063）
+- **S13-L01** 性能成本模型与优化策略（课程：056「23-1」性能优化的一般思路、057「23-2」性能优化策略简介）
+- **S13-L02** Bailout 条件与子树复用（课程：058「23-3」实现 bailout 策略（上）、059「23-4」实现 bailout 策略（下））
+- **S13-L03** eagerState 与提前跳过调度（课程：060「23-5」实现 eagerState 策略）
+- **S13-L04** React.memo、useMemo 与 useCallback（课程：061「23-6」实现 React.memo、062「23-7」实现 useMemo、useCallback）
+- **S13-L05** Context 与 Bailout 协作（课程：063「23-8」context 兼容 bailout 策略）
 
 对应课程：
 
