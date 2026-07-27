@@ -104,7 +104,7 @@
     .progress-number { font: 600 17px/1.3 var(--mono); }
     .progress-number strong { color: var(--cyan); font-size: 24px; }
     .progress-track { height: 8px; margin: 26px 0 18px; background: var(--surface-strong); overflow: hidden; }
-    .progress-track span { display: block; height: 100%; width: 0%; background: var(--cyan); }
+    .progress-track span { display: block; height: 100%; width: 6%; background: var(--cyan); }
     .legend { display: flex; flex-wrap: wrap; gap: 10px 22px; color: var(--muted); font: 12px/1.4 var(--mono); }
     .legend span, .status { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
     .legend i, .status i { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: 0 0 auto; }
@@ -238,13 +238,13 @@
         <div class="hero-grid">
           <div>
             <p class="label">当前学习</p>
-            <p class="current-title">阶段 00 · 准备与方法建立</p>
+            <p class="current-title">阶段 01 · JSX 与 ReactElement</p>
             <p class="label">下一步动作</p>
-            <a class="next-action" href="#roadmap">→ 开始 S00-L01</a>
+            <a class="next-action" href="#roadmap">→ 开始 S01-L01</a>
           </div>
           <div class="progress-panel">
-            <div class="progress-number"><strong>0</strong> / 16 阶段已掌握</div>
-            <div class="progress-track" aria-label="总体进度 0%"><span></span></div>
+            <div class="progress-number"><strong>1</strong> / 16 阶段已掌握</div>
+            <div class="progress-track" aria-label="总体进度 6%"><span></span></div>
             <div class="legend">
               <span class="status status-未开始"><i></i>未开始</span><span class="status status-理解中"><i></i>理解中</span><span class="status status-实现中"><i></i>实现中</span><span class="status status-待验收"><i></i>待验收</span><span class="status status-已掌握"><i></i>已掌握</span>
             </div>
@@ -263,12 +263,12 @@
           <button class="filter active" type="button" data-filter="全部">全部</button><button class="filter " type="button" data-filter="未开始">未开始</button><button class="filter " type="button" data-filter="理解中">理解中</button><button class="filter " type="button" data-filter="实现中">实现中</button><button class="filter " type="button" data-filter="待验收">待验收</button><button class="filter " type="button" data-filter="已掌握">已掌握</button>
         </div>
         <div id="stage-list">
-  <details class="stage" data-status="未开始" open>
+  <details class="stage" data-status="已掌握" >
     <summary>
       <span class="stage-index">00</span>
       <span class="stage-title">准备与方法建立</span>
-      <span class="status status-未开始"><i></i>未开始</span>
-      <span class="stage-count">0/2</span>
+      <span class="status status-已掌握"><i></i>已掌握</span>
+      <span class="stage-count">2/2</span>
       <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5"/></svg>
     </summary>
     <div class="lesson-table" role="table" aria-label="准备与方法建立 Lessons">
@@ -276,16 +276,16 @@
         <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
       </div>
 
-        <div class="lesson-row is-current" role="row">
+        <div class="lesson-row " role="row">
           <div>
             <strong>S00-L01</strong>
             <span>学习系统与课程架构</span>
           </div>
-          <span class="status status-理解中"><i></i>理解中</span>
+          <span class="status status-已完成"><i></i>已完成</span>
           <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">001「课程介绍」</a>
           <div class="evidence-links">
-            <span class="empty">—</span>
-            <span class="empty">—</span>
+            <a href="notes/S00-L01-学习系统与课程架构.md">笔记</a>
+            <a href="interview-question-bank.md#阶段-0工程配置与学习方法">阶段验收</a>
           </div>
         </div>
         <div class="lesson-row " role="row">
@@ -293,16 +293,16 @@
             <strong>S00-L02</strong>
             <span>mini React monorepo 项目架构与开发环境</span>
           </div>
-          <span class="status status-未开始"><i></i>未开始</span>
+          <span class="status status-已完成"><i></i>已完成</span>
           <a class="source-link" href="https://appjiz2zqrn2142.h5.xiaoeknow.com/p/course/column/p_638035c1e4b07b05581d25db">002「搭建项目架构」</a>
           <div class="evidence-links">
-            <span class="empty">—</span>
-            <span class="empty">—</span>
+            <a href="notes/S00-L02-mini%20React%20monorepo%20项目架构与开发环境.md">笔记</a>
+            <a href="notes/S00-L02-mini%20React%20monorepo%20项目架构与开发环境.md#10-掌握证据">pnpm check 验证</a>
           </div>
         </div>
     </div>
   </details>
-  <details class="stage" data-status="未开始" >
+  <details class="stage" data-status="未开始" open>
     <summary>
       <span class="stage-index">01</span>
       <span class="stage-title">JSX 与 ReactElement</span>
@@ -315,7 +315,7 @@
         <span>Lesson / 主题</span><span>状态</span><span>课程 / 来源</span><span>掌握证据</span>
       </div>
 
-        <div class="lesson-row " role="row">
+        <div class="lesson-row is-current" role="row">
           <div>
             <strong>S01-L01</strong>
             <span>JSX 编译结果与 JSX Runtime</span>
@@ -1101,13 +1101,13 @@
           <p class="section-note">课程看完不等于掌握。实现、测试和追问记录共同构成证据。</p>
         </div>
         <div class="metric-strip">
-          <div class="metric"><strong>0</strong><span>已完成 Lesson / 49</span></div>
+          <div class="metric"><strong>2</strong><span>已完成 Lesson / 49</span></div>
           <div class="metric"><strong>0</strong><span>教学 Lesson</span></div>
           <div class="metric"><strong>0</strong><span>Learning Records</span></div>
-          <div class="metric"><strong>46</strong><span>面试问题</span></div>
+          <div class="metric"><strong>50</strong><span>面试问题</span></div>
         </div>
         <div class="evidence-table">
-          <div class="evidence-row"><strong>Lesson</strong><span>0 项</span><span>lessons/ 暂无成果</span></div><div class="evidence-row"><strong>Notes</strong><span>0 项</span><span>notes/ 暂无成果</span></div><div class="evidence-row"><strong>Learning Records</strong><span>0 项</span><span>learning-records/ 暂无成果</span></div><div class="evidence-row"><strong>Reference</strong><span>0 项</span><span>reference/ 暂无成果</span></div>
+          <div class="evidence-row"><strong>Lesson</strong><span>0 项</span><span>lessons/ 暂无成果</span></div><div class="evidence-row"><strong>Notes</strong><span>2 项</span><span>S00-L02-mini React monorepo 项目架构与开发环境.md</span></div><div class="evidence-row"><strong>Learning Records</strong><span>0 项</span><span>learning-records/ 暂无成果</span></div><div class="evidence-row"><strong>Reference</strong><span>0 项</span><span>reference/ 暂无成果</span></div>
           <div class="evidence-row"><strong>mini-react18 实现仓库</strong><span class="repo-state">已创建</span><span>/Users/mow/Documents/Projects/mini-react18</span></div>
         </div>
       </div>
@@ -1120,7 +1120,7 @@
           <p class="section-note">题库按机制持续积累；最终目标是 1 分钟回答、3 分钟回答和两轮追问都能成立。</p>
         </div>
         <div class="interview-grid">
-          <div class="interview-item"><strong>JSX 与 ReactElement</strong><span>3 题</span></div><div class="interview-item"><strong>Reconciler 与 Update Queue</strong><span>3 题</span></div><div class="interview-item"><strong>Render 与 Commit</strong><span>3 题</span></div><div class="interview-item"><strong>FunctionComponent 与 Hooks</strong><span>3 题</span></div><div class="interview-item"><strong>Update 流程</strong><span>3 题</span></div><div class="interview-item"><strong>事件系统</strong><span>3 题</span></div><div class="interview-item"><strong>Diff 与 Fragment</strong><span>4 题</span></div><div class="interview-item"><strong>Lane 与调度</strong><span>4 题</span></div><div class="interview-item"><strong>Effect</strong><span>4 题</span></div><div class="interview-item"><strong>并发渲染与 Transition</strong><span>4 题</span></div><div class="interview-item"><strong>useRef 与 Context</strong><span>3 题</span></div><div class="interview-item"><strong>Suspense 与 use</strong><span>4 题</span></div><div class="interview-item"><strong>性能优化</strong><span>5 题</span></div>
+          <div class="interview-item"><strong>阶段 0：工程配置与学习方法</strong><span>4 题</span></div><div class="interview-item"><strong>JSX 与 ReactElement</strong><span>3 题</span></div><div class="interview-item"><strong>Reconciler 与 Update Queue</strong><span>3 题</span></div><div class="interview-item"><strong>Render 与 Commit</strong><span>3 题</span></div><div class="interview-item"><strong>FunctionComponent 与 Hooks</strong><span>3 题</span></div><div class="interview-item"><strong>Update 流程</strong><span>3 题</span></div><div class="interview-item"><strong>事件系统</strong><span>3 题</span></div><div class="interview-item"><strong>Diff 与 Fragment</strong><span>4 题</span></div><div class="interview-item"><strong>Lane 与调度</strong><span>4 题</span></div><div class="interview-item"><strong>Effect</strong><span>4 题</span></div><div class="interview-item"><strong>并发渲染与 Transition</strong><span>4 题</span></div><div class="interview-item"><strong>useRef 与 Context</strong><span>3 题</span></div><div class="interview-item"><strong>Suspense 与 use</strong><span>4 题</span></div><div class="interview-item"><strong>性能优化</strong><span>5 题</span></div>
         </div>
       </div>
     </section>
@@ -1149,7 +1149,7 @@
     </section>
   </main>
   <footer>
-    <div class="shell">由仓库文件生成 · 2026/7/24 22:31:17 · 学习进度来自仓库，localStorage 仅保存主题偏好</div>
+    <div class="shell">由仓库文件生成 · 2026/7/27 23:45:57 · 学习进度来自仓库，localStorage 仅保存主题偏好</div>
   </footer>
   <script>
     const themeKey = 'react-learning-hub-theme';

@@ -2,6 +2,43 @@
 
 这是一个持续维护的文档。完成相关阶段后再补答案。
 
+## 阶段 0：工程配置与学习方法
+
+### 为什么这个 mini React 项目适合使用 monorepo？
+
+后续会有 `react`、`react-dom`、`react-reconciler`、scheduler 等独立包，公共逻辑可以沉淀到 shared 包。monorepo 让这些包共享同一份源码、类型规则和构建规范，并通过 workspace 依赖在本地联调；修改 shared 后，不需要先发布临时版本就能验证下游包。
+
+追问：`peerDependencies` 为什么不是 monorepo 本地联调机制？
+
+`peerDependencies` 约束发布后的宿主项目应提供哪一份依赖；workspace 依赖才把工作区中的包链接到本地最新源码，用于开发期联调。
+
+### lint、tsc、代码风格与 commit 规范各防止什么问题？
+
+- lint：发现未使用变量、危险写法和违反静态规则的代码。
+- `tsc`：发现类型不匹配、错误的参数或返回值等类型错误。
+- 代码风格：统一缩进、引号、分号等可读性约定；本项目由 ESLint 承担，不单独使用 Prettier。
+- commit 规范：通过 pre-commit 运行质量检查，通过 commit-msg 和 commitlint 约束提交信息格式。
+
+追问：为什么有 `tsc` 仍需要 lint？
+
+类型检查不覆盖全部代码质量规则。例如当前 TypeScript 配置没有启用 `noUnusedLocals`，但 ESLint 可以发现未使用变量；lint 还负责项目约定和部分危险写法。
+
+追问：`git commit --no-verify` 有什么影响？
+
+它会绕过本地 Husky 钩子。CI 应运行 `pnpm check`，并单独对提交范围或 PR 标题运行 commitlint，避免本地钩子成为唯一保障。
+
+### 为什么当前选择 Rollup？
+
+当前目标是构建库包，而不是先开发完整应用。Rollup 能以较少配置输出可读的 ESM、类型声明和 source map，方便观察模块边界与调试。它不等同于完整的浏览器开发服务器。
+
+追问：后续需要浏览器 demo 时，为什么不直接替换整套构建工具？
+
+先保留 Rollup 负责库构建，按需为 demo 增加 HTML 入口和开发工具。这样不会改变已验证的库入口、类型声明和输出格式；整体替换工具链会扩大模块解析、产物和调试链路的回归范围。
+
+### `pnpm check` 验证了什么？没有验证什么？
+
+它依次运行 lint、类型检查、测试和构建，证明当前工程规则可执行、测试框架能运行、Rollup 能产出库文件。它不验证提交信息规范，也不能仅凭退出码为 0 证明所有配置设计合理；验证范围取决于实际接入的检查与测试。
+
 ## JSX 与 ReactElement
 
 - JSX 到 ReactElement 发生了什么？

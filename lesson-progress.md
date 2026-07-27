@@ -4,8 +4,8 @@
 
 | Lesson | 状态 | NotebookLM | Notes | 实现证据 | 最近更新 |
 | --- | --- | --- | --- | --- | --- |
-| S00-L01 | 理解中 |  |  |  |  |
-| S00-L02 | 未开始 |  |  |  |  |
+| S00-L01 | 已完成 | - | [笔记](notes/S00-L01-学习系统与课程架构.md) | [阶段验收](interview-question-bank.md#阶段-0工程配置与学习方法) | 2026/07/27 |
+| S00-L02 | 已完成 | [课程笔记](https://notebooklm.google.com/notebook/5ed76725-7a7f-43db-8832-7f53b2eca330/artifact/561fb372-175f-4255-a1f0-7b9fbe6b97fa?utm_source=nlm_web_share&utm_medium=google_oo&utm_campaign=art_share_1&utm_content=&utm_smc=nlm_web_share_google_oo_art_share_1) | [笔记](notes/S00-L02-mini%20React%20monorepo%20项目架构与开发环境.md) | [pnpm check 验证](notes/S00-L02-mini%20React%20monorepo%20项目架构与开发环境.md#10-掌握证据) | 2026/07/27 |
 | S01-L01 | 未开始 |  |  |  |  |
 | S01-L02 | 未开始 |  |  |  |  |
 | S01-L03 | 未开始 |  |  |  |  |
