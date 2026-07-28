@@ -10,7 +10,7 @@
 | 1 JSX 与 ReactElement | 未开始 |  |  |  |  |
 | 2 Reconciler 架构与首次更新入口 | 未开始 |  |  |  |  |
 | 3 mount 流程与首屏渲染 | 未开始 |  |  |  |  |
-| 4 FunctionComponent 与 Hooks 基础 | 未开始 |  |  |  |  |
+| 4 FunctionComponent、Hooks 与 JSX 测试 | 未开始 |  |  |  |  |
 | 5 update 流程与 useState 更新 | 未开始 |  |  |  |  |
 | 6 事件系统 | 未开始 |  |  |  |  |
 | 7 Diff 与 Fragment | 未开始 |  |  |  |  |

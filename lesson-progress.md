@@ -8,7 +8,6 @@
 | S00-L02 | 已完成 | [课程笔记](https://notebooklm.google.com/notebook/5ed76725-7a7f-43db-8832-7f53b2eca330/artifact/561fb372-175f-4255-a1f0-7b9fbe6b97fa?utm_source=nlm_web_share&utm_medium=google_oo&utm_campaign=art_share_1&utm_content=&utm_smc=nlm_web_share_google_oo_art_share_1) | [笔记](https://github.com/Kiokku/react-learning-hub/blob/main/notes/S00-L02-mini%20React%20monorepo%20项目架构与开发环境.md) | [实现 commit](https://github.com/Kiokku/mini-react18/commit/fbf0ba51c7dd655d1574805fbbc264ccc3560bd7) | 2026/07/27 |
 | S01-L01 | 未开始 |  |  |  |  |
 | S01-L02 | 未开始 |  |  |  |  |
-| S01-L03 | 未开始 |  |  |  |  |
 | S02-L01 | 未开始 |  |  |  |  |
 | S02-L02 | 未开始 |  |  |  |  |
 | S03-L01 | 未开始 |  |  |  |  |
@@ -16,6 +15,7 @@
 | S03-L03 | 未开始 |  |  |  |  |
 | S04-L01 | 未开始 |  |  |  |  |
 | S04-L02 | 未开始 |  |  |  |  |
+| S04-L03 | 未开始 |  |  |  |  |
 | S05-L01 | 未开始 |  |  |  |  |
 | S05-L02 | 未开始 |  |  |  |  |
 | S05-L03 | 未开始 |  |  |  |  |

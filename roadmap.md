@@ -37,15 +37,12 @@
 
 - **S01-L01** JSX 编译结果与 JSX Runtime（课程：003「2-1」实现 JSX、004「2-2」实现 JSX 的打包）
 - **S01-L02** ReactElement 数据结构与调试（课程：005「2-3」实现第一种调试方式）
-- **S01-L03** JSX 测试方法与行为边界（课程：019「9-1」实现第三种调试方式、020「9-2」测试 JSX）
 
 对应课程：
 
 - 003 「2-1」实现 JSX
 - 004 「2-2」实现 JSX 的打包
 - 005 「2-3」实现第一种调试方式
-- 019 「9-1」实现第三种调试方式
-- 020 「9-2」测试 JSX
 
 重点：
 
@@ -57,7 +54,7 @@
 实现产出：
 
 - 简化版 JSX runtime。
-- ReactElement 测试。
+- 针对 ReactElement 创建结果的最小基础测试，不提前引入课程 9 的调试方式。
 
 面试输出：
 
@@ -123,12 +120,13 @@
 - 为什么 completeWork 阶段适合创建 DOM？
 - Mutation 子阶段做什么？
 
-## 阶段 4：FunctionComponent 与 Hooks 基础
+## 阶段 4：FunctionComponent、Hooks 与 JSX 测试
 
 ### 计划 Lessons
 
 - **S04-L01** FunctionComponent 执行模型（课程：015「7-1」实现 FunctionComponent、016「7-2」实现第二种调试方式）
 - **S04-L02** Hook 链表与 mountState（课程：017「8-1」实现 Hooks 架构、018「8-2」实现 useState）
+- **S04-L03** JSX 调试与回归测试（课程：019「9-1」实现第三种调试方式、020「9-2」测试 JSX）
 
 对应课程：
 
@@ -136,22 +134,27 @@
 - 016 「7-2」实现第二种调试方式
 - 017 「8-1」实现 Hooks 架构
 - 018 「8-2」实现 useState
+- 019 「9-1」实现第三种调试方式
+- 020 「9-2」测试 JSX
 
 重点：
 
 - 函数组件本质是执行函数得到 children。
 - Hook 状态存储在 Fiber 的 Hook 链表上，不存在函数闭包里。
 - 理解当前渲染中的 Hook 指针。
+- 在前两种调试方式和完整 mount 链路的基础上，引入第三种调试方式并为 JSX 建立回归测试。
 
 实现产出：
 
 - mount 阶段的 `useState`。
+- JSX 回归测试。
 
 面试输出：
 
 - 函数组件重新执行后状态为什么不会丢？
 - Hooks 为什么不能写在条件语句里？
 - useState 返回的 dispatch 和 Fiber 有什么关系？
+- 如何用测试验证 JSX Runtime 创建 ReactElement 的行为边界？
 
 ## 阶段 5：update 流程与 useState 更新
 
