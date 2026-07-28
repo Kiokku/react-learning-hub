@@ -80,6 +80,55 @@ function parseGlossary(markdown) {
     .map((match) => ({ term: match[1], definition: match[2], avoid: match[3] }));
 }
 
+function parseInterviewSections(markdown) {
+  const sections = [...markdown.matchAll(/^## (.+)$/gm)];
+  return sections.map((sectionMatch, sectionIndex) => {
+    const start = sectionMatch.index + sectionMatch[0].length;
+    const end = sections[sectionIndex + 1]?.index ?? markdown.length;
+    const body = markdown.slice(start, end).trim();
+    const questionHeadings = [...body.matchAll(/^### (.+)$/gm)];
+    const questions = questionHeadings.length
+      ? questionHeadings.map((questionMatch, questionIndex) => {
+        const answerStart = questionMatch.index + questionMatch[0].length;
+        const answerEnd = questionHeadings[questionIndex + 1]?.index ?? body.length;
+        return {
+          question: questionMatch[1].trim(),
+          answer: body.slice(answerStart, answerEnd).trim(),
+        };
+      })
+      : bullets(body).map((question) => ({ question, answer: '' }));
+    return { title: sectionMatch[1].trim(), questions };
+  });
+}
+
+function renderInlineMarkdown(value) {
+  return escapeHtml(value).replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+function renderQuizAnswer(markdown) {
+  if (!markdown) return '<p class="quiz-answer-empty">本题答案尚未记录。</p>';
+  const lines = markdown.split('\n');
+  const output = [];
+  for (let index = 0; index < lines.length;) {
+    if (!lines[index].trim()) {
+      index += 1;
+      continue;
+    }
+    if (lines[index].startsWith('- ')) {
+      const items = [];
+      while (index < lines.length && lines[index].startsWith('- ')) {
+        items.push(`<li>${renderInlineMarkdown(lines[index].slice(2))}</li>`);
+        index += 1;
+      }
+      output.push(`<ul>${items.join('')}</ul>`);
+      continue;
+    }
+    output.push(`<p>${renderInlineMarkdown(lines[index])}</p>`);
+    index += 1;
+  }
+  return output.join('');
+}
+
 function listFiles(directory, extensions) {
   const absolute = join(root, directory);
   if (!existsSync(absolute)) return [];
@@ -145,13 +194,16 @@ const resources = parseLinks(read('RESOURCES.md'));
 const mainCourse = resources.find((item) => /^课程[：:]/.test(item.label));
 const glossary = parseGlossary(read('CONTEXT.md'));
 const interviewMarkdown = read('interview-question-bank.md');
-const interviewSections = [...interviewMarkdown.matchAll(/^## (.+)$/gm)].map((match, index, matches) => {
-  const start = match.index + match[0].length;
-  const end = matches[index + 1]?.index ?? interviewMarkdown.length;
-  const count = (interviewMarkdown.slice(start, end).match(/^- /gm) ?? []).length;
-  return { title: match[1], count };
-});
-const totalQuestions = interviewSections.reduce((sum, item) => sum + item.count, 0);
+const interviewSections = parseInterviewSections(interviewMarkdown);
+const quizData = interviewSections.map((section) => ({
+  title: section.title,
+  questions: section.questions.map((item) => ({
+    question: item.question,
+    answerHtml: renderQuizAnswer(item.answer),
+  })),
+}));
+const quizDataJson = JSON.stringify(quizData).replaceAll('<', '\\u003c');
+const totalQuestions = interviewSections.reduce((sum, item) => sum + item.questions.length, 0);
 const artifacts = {
   lessons: listFiles('lessons', ['.html']),
   notes: listFiles('notes', ['.md']),
@@ -368,10 +420,36 @@ const html = `<!doctype html>
     .evidence-row span:last-child { overflow-wrap: anywhere; }
     .repo-state { color: ${implementationRepoExists ? 'var(--lime)' : 'var(--muted)'} !important; }
     .interview-grid { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--line); }
-    .interview-item { display: flex; justify-content: space-between; gap: 20px; padding: 17px 0; border-bottom: 1px solid var(--line); }
+    .interview-item { display: flex; width: 100%; justify-content: space-between; gap: 20px; padding: 17px 0; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
     .interview-item:nth-child(odd) { padding-right: 28px; border-right: 1px solid var(--line); }
     .interview-item:nth-child(even) { padding-left: 28px; }
     .interview-item span { color: var(--muted); font: 12px/1.5 var(--mono); }
+    .interview-item:hover strong, .interview-item:focus-visible strong { color: var(--cyan); }
+    .interview-item:focus-visible { outline: 2px solid var(--cyan); outline-offset: -2px; }
+    .interview-item:target { background: color-mix(in srgb, var(--cyan) 8%, transparent); }
+    .quiz-dialog { width: min(calc(100% - 32px), 720px); max-height: min(820px, calc(100vh - 32px)); padding: 0; border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); box-shadow: 0 24px 80px #0009; }
+    .quiz-dialog::backdrop { background: #02070bcc; backdrop-filter: blur(3px); }
+    .quiz-header { display: flex; align-items: start; justify-content: space-between; gap: 20px; padding: 24px 28px; border-bottom: 1px solid var(--line); }
+    .quiz-header p { margin: 0 0 5px; color: var(--cyan); font: 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+    .quiz-header h2 { margin: 0; font-size: 20px; }
+    .quiz-close { flex: 0 0 auto; width: 36px; height: 36px; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 24px; line-height: 1; cursor: pointer; }
+    .quiz-close:hover, .quiz-close:focus-visible { border-color: var(--cyan); color: var(--cyan); }
+    .quiz-body { padding: 30px 28px 18px; }
+    .quiz-progress { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 22px; color: var(--muted); font: 11px/1.5 var(--mono); }
+    .quiz-question { min-height: 72px; margin: 0; font-size: clamp(22px, 4vw, 30px); line-height: 1.35; }
+    .quiz-answer { margin-top: 24px; padding: 20px; border-left: 3px solid var(--cyan); background: var(--surface-strong); color: var(--muted); }
+    .quiz-answer[hidden] { display: none; }
+    .quiz-answer p { margin: 0 0 12px; }
+    .quiz-answer p:last-child { margin-bottom: 0; }
+    .quiz-answer ul { margin: 0; padding-left: 20px; }
+    .quiz-answer li + li { margin-top: 7px; }
+    .quiz-answer code { color: var(--text); font: .9em/1.5 var(--mono); }
+    .quiz-answer-empty { color: var(--faint); }
+    .quiz-actions { display: flex; align-items: center; gap: 10px; padding: 18px 28px 28px; }
+    .quiz-action { min-height: 40px; padding: 0 16px; border: 1px solid var(--line); background: transparent; color: var(--text); font: 12px/1 var(--mono); cursor: pointer; }
+    .quiz-action:hover:not(:disabled), .quiz-action:focus-visible { border-color: var(--cyan); color: var(--cyan); }
+    .quiz-action:disabled { color: var(--faint); cursor: not-allowed; }
+    .quiz-answer-toggle { margin-right: auto; border-color: var(--cyan); color: var(--cyan); }
     .resource-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
     h3 { margin: 0 0 18px; font-size: 20px; }
     .plain-list { border-top: 1px solid var(--line); }
@@ -404,6 +482,11 @@ const html = `<!doctype html>
       .evidence-row span:last-child { grid-column: 1 / -1; }
       .interview-grid, .resource-grid { grid-template-columns: 1fr; gap: 50px; }
       .interview-item:nth-child(n) { padding-left: 0; padding-right: 0; border-right: 0; }
+      .quiz-header { padding: 20px; }
+      .quiz-body { padding: 24px 20px 14px; }
+      .quiz-actions { padding: 14px 20px 20px; flex-wrap: wrap; }
+      .quiz-answer-toggle { width: 100%; margin-right: 0; }
+      .quiz-action:not(.quiz-answer-toggle) { flex: 1; }
       .plain-row { grid-template-columns: 1fr; gap: 8px; }
     }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } summary svg { transition: none; } }
@@ -500,7 +583,7 @@ const html = `<!doctype html>
           <p class="section-note">题库按机制持续积累；最终目标是 1 分钟回答、3 分钟回答和两轮追问都能成立。</p>
         </div>
         <div class="interview-grid">
-          ${interviewSections.map((item) => `<div class="interview-item"><strong>${escapeHtml(item.title)}</strong><span>${item.count} 题</span></div>`).join('')}
+          ${interviewSections.map((item, index) => `<button class="interview-item" id="interview-section-${index + 1}" type="button" data-quiz-section="${index}" aria-haspopup="dialog"><strong>${escapeHtml(item.title)}</strong><span>${item.questions.length} 题</span></button>`).join('')}
         </div>
       </div>
     </section>
@@ -528,6 +611,25 @@ const html = `<!doctype html>
       </div>
     </section>
   </main>
+  <dialog class="quiz-dialog" id="quiz-dialog" aria-labelledby="quiz-title">
+    <div class="quiz-header">
+      <div>
+        <p>Interview Quiz</p>
+        <h2 id="quiz-title"></h2>
+      </div>
+      <button class="quiz-close" type="button" data-quiz-close aria-label="关闭 Quiz">×</button>
+    </div>
+    <div class="quiz-body">
+      <div class="quiz-progress"><span id="quiz-counter" aria-live="polite"></span><span>先回答，再查看参考答案</span></div>
+      <h3 class="quiz-question" id="quiz-question"></h3>
+      <div class="quiz-answer" id="quiz-answer" hidden></div>
+    </div>
+    <div class="quiz-actions">
+      <button class="quiz-action quiz-answer-toggle" type="button" data-quiz-answer aria-expanded="false">查看答案</button>
+      <button class="quiz-action" type="button" data-quiz-previous>上一题</button>
+      <button class="quiz-action" type="button" data-quiz-next>下一题</button>
+    </div>
+  </dialog>
   <footer>
     <div class="shell">由仓库文件生成 · ${escapeHtml(new Date().toLocaleString('zh-CN', { hour12: false }))} · 学习进度来自仓库，localStorage 仅保存主题偏好</div>
   </footer>
@@ -557,6 +659,64 @@ const html = `<!doctype html>
       const filter = button.dataset.filter;
       stages.forEach((stage) => { stage.hidden = filter !== '全部' && stage.dataset.status !== filter; });
     }));
+    const quizData = ${quizDataJson};
+    const quizDialog = document.querySelector('#quiz-dialog');
+    const quizTitle = document.querySelector('#quiz-title');
+    const quizCounter = document.querySelector('#quiz-counter');
+    const quizQuestion = document.querySelector('#quiz-question');
+    const quizAnswer = document.querySelector('#quiz-answer');
+    const quizAnswerToggle = document.querySelector('[data-quiz-answer]');
+    const quizPrevious = document.querySelector('[data-quiz-previous]');
+    const quizNext = document.querySelector('[data-quiz-next]');
+    let activeQuizSection = 0;
+    let activeQuizQuestion = 0;
+    let quizTrigger = null;
+    const renderQuiz = () => {
+      const section = quizData[activeQuizSection];
+      const item = section.questions[activeQuizQuestion];
+      quizTitle.textContent = section.title;
+      quizCounter.textContent = '第 ' + (activeQuizQuestion + 1) + ' / ' + section.questions.length + ' 题';
+      quizQuestion.textContent = item.question;
+      quizAnswer.innerHTML = item.answerHtml;
+      quizAnswer.hidden = true;
+      quizAnswerToggle.textContent = '查看答案';
+      quizAnswerToggle.setAttribute('aria-expanded', 'false');
+      quizPrevious.disabled = activeQuizQuestion === 0;
+      quizNext.textContent = activeQuizQuestion === section.questions.length - 1 ? '完成' : '下一题';
+    };
+    document.querySelectorAll('[data-quiz-section]').forEach((button) => {
+      button.addEventListener('click', () => {
+        activeQuizSection = Number(button.dataset.quizSection);
+        activeQuizQuestion = 0;
+        quizTrigger = button;
+        renderQuiz();
+        quizDialog.showModal();
+      });
+    });
+    document.querySelector('[data-quiz-close]').addEventListener('click', () => quizDialog.close());
+    quizDialog.addEventListener('click', (event) => {
+      if (event.target === quizDialog) quizDialog.close();
+    });
+    quizDialog.addEventListener('close', () => quizTrigger?.focus());
+    quizAnswerToggle.addEventListener('click', () => {
+      quizAnswer.hidden = !quizAnswer.hidden;
+      quizAnswerToggle.textContent = quizAnswer.hidden ? '查看答案' : '隐藏答案';
+      quizAnswerToggle.setAttribute('aria-expanded', String(!quizAnswer.hidden));
+    });
+    quizPrevious.addEventListener('click', () => {
+      if (activeQuizQuestion === 0) return;
+      activeQuizQuestion -= 1;
+      renderQuiz();
+    });
+    quizNext.addEventListener('click', () => {
+      const questions = quizData[activeQuizSection].questions;
+      if (activeQuizQuestion === questions.length - 1) {
+        quizDialog.close();
+        return;
+      }
+      activeQuizQuestion += 1;
+      renderQuiz();
+    });
     const sections = [...document.querySelectorAll('main > section[id]')];
     const navLinks = [...document.querySelectorAll('.nav-links a')];
     if ('IntersectionObserver' in window) {
