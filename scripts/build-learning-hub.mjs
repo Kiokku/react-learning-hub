@@ -171,11 +171,15 @@ const stageStatuses = new Set(['未开始', '理解中', '实现中', '待验收
 const lessonStatuses = new Set(['未开始', '理解中', '实现中', '已完成']);
 const roadmapLessonIds = new Set(stages.flatMap((stage) => stage.lessons.map((lesson) => lesson.id)));
 const progressLessonIds = new Set(lessonProgress.keys());
+const learningRecords = listFiles('learning-records', ['.md']);
 
 if (stages.length !== 16) throw new Error(`Expected 16 stages, found ${stages.length}`);
 for (const stage of stages) {
   if (!stageStatuses.has(stage.progress.status)) throw new Error(`Invalid stage status: ${stage.id} ${stage.progress.status}`);
   if (!stage.lessons.length) throw new Error(`Stage has no planned Lessons: ${stage.id}`);
+  if (stage.progress.status === '已掌握' && !learningRecords.some((record) => record.name.startsWith(`${stage.id}-`))) {
+    throw new Error(`Missing Learning Record for mastered stage: ${stage.id}`);
+  }
   for (const lesson of stage.lessons) {
     if (!progressLessonIds.has(lesson.id)) throw new Error(`Missing lesson-progress row: ${lesson.id}`);
     if (!lessonStatuses.has(lesson.progress.status)) throw new Error(`Invalid Lesson status: ${lesson.id} ${lesson.progress.status}`);
@@ -207,7 +211,7 @@ const totalQuestions = interviewSections.reduce((sum, item) => sum + item.questi
 const artifacts = {
   lessons: listFiles('lessons', ['.html']),
   notes: listFiles('notes', ['.md']),
-  records: listFiles('learning-records', ['.md']),
+  records: learningRecords,
   references: listFiles('reference', ['.html']),
 };
 const implementationRepoPath = resolve(root, '..', 'mini-react18');
@@ -221,7 +225,7 @@ const stagePercent = Math.round((masteredStages / stages.length) * 100);
 
 const statusClass = (status) => `status status-${status}`;
 const artifactRows = [
-  ['Lesson', artifacts.lessons, 'lessons/'],
+  ['可选教学材料', artifacts.lessons, 'lessons/'],
   ['Notes', artifacts.notes, 'notes/'],
   ['Learning Records', artifacts.records, 'learning-records/'],
   ['Reference', artifacts.references, 'reference/'],
@@ -565,7 +569,7 @@ const html = `<!doctype html>
         </div>
         <div class="metric-strip">
           <div class="metric"><strong>${completedLessons}</strong><span>已完成 Lesson / ${totalLessons}</span></div>
-          <div class="metric"><strong>${artifacts.lessons.length}</strong><span>教学 Lesson</span></div>
+          <div class="metric"><strong>${artifacts.lessons.length}</strong><span>可选教学材料</span></div>
           <div class="metric"><strong>${artifacts.records.length}</strong><span>Learning Records</span></div>
           <div class="metric"><strong>${totalQuestions}</strong><span>面试问题</span></div>
         </div>

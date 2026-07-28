@@ -45,7 +45,8 @@ Lesson 级状态和证据维护在 [`lesson-progress.md`](./lesson-progress.md)�
 
 | 日期 | 课程 | 课前预测 | 当天实现 | 最大漏洞 | 下一步 |
 | --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |
+| 2026/07/24 | S00-L01、S00-L02 理解日 | 阶段 0 应先建立学习闭环，并明确 monorepo、工程规范和打包工具各自解决的问题。 | 记录学习仓库与实现仓库的分工，形成 mini React 工程环境的验证目标。 | 尚未区分 `peerDependencies` 与 workspace 本地联调，工程链路也没有可执行证据。 | 在 `mini-react18` 中完成最小工程环境并运行统一检查。 |
+| 2026/07/27 | S00-L02 实现日与阶段验收 | `pnpm check` 应覆盖 lint、类型检查、测试和构建；提交信息规范需要单独验证。 | 完成 pnpm workspace、shared 包及 ESLint、TypeScript、Husky、commitlint、Vitest、Rollup 配置；提交 `fbf0ba5`。 | `pnpm check` 不验证 commit message，本地 hooks 也可能被跳过。 | 完成阶段 0 验收，进入 S01-L01 JSX Runtime。 |
 
 ## 双周复盘
 

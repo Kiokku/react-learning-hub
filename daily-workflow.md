@@ -35,7 +35,7 @@
 2. 用测试证明关键行为。
 3. 脱离笔记讲清主链路，并通过两轮追问。
 
-三项都通过后，阶段才能标记为 `已掌握`，并按证据创建 Learning Record。
+三项都通过后，阶段才能标记为 `已掌握`，并按 [`templates/learning-record-template.md`](./templates/learning-record-template.md) 创建 Learning Record。文件名必须以对应阶段 ID 开头，例如 `S00-准备与方法建立.md`。
 
 ## NotebookLM 与 teach 分工
 

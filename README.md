@@ -65,7 +65,7 @@ Projects/
 请读取当前学习记录，诊断我的已有理解，并只生成下一个机制级 Lesson。
 ```
 
-`teach` 应按阶段使用，但每次只推进一个机制级 Lesson。NotebookLM 负责基于课程来源做带引用的总结和问答，`teach` 负责诊断、测试设计、闭卷实现引导、纠偏与面试追问。
+`teach` 应按阶段使用，但每次只推进一个机制级 Lesson。NotebookLM 负责基于课程来源做带引用的总结和问答，`teach` 负责诊断、测试设计、闭卷实现引导、纠偏与面试追问，不需要另行生成一套重复课程内容的 Lesson HTML。
 
 ### 4. 执行两日学习闭环
 
@@ -83,7 +83,7 @@ Projects/
 - `lesson-progress.md`：Lesson 状态、NotebookLM 来源、笔记和实现证据。
 - `progress-tracker.md`：阶段状态、日期、掌握度、每日记录和双周复盘。
 - `notes/`：练习、伪代码、错误假设、实现差异和面试回答。
-- `learning-records/`：通过阶段验收后形成的稳定理解。
+- `learning-records/`：通过阶段验收后形成的稳定理解，按 [`templates/learning-record-template.md`](./templates/learning-record-template.md) 创建，文件名以对应阶段 ID 开头，例如 `S00-准备与方法建立.md`。
 
 Lesson 状态只能按 `未开始 → 理解中 → 实现中 → 已完成` 推进。阶段全部 Lesson 完成后仍是“待验收”；只有闭卷实现、关键行为测试和两轮追问全部通过，才是“已掌握”。
 
@@ -215,13 +215,15 @@ https://<你的账号>.github.io/<仓库名>/
 ├── progress-tracker.md        # 阶段、每日和双周进度
 ├── prompts.md                 # teach、Review 和面试 Prompt
 ├── interview-question-bank.md # React 专项题库
-├── templates/                 # NotebookLM 与 Lesson 模板
+├── notes/                     # Lesson 练习、偏差和面试输出
+├── learning-records/          # 阶段验收后的稳定理解
+├── templates/                 # NotebookLM、Lesson Notes 与 Learning Record 模板
 ├── scripts/                   # Learning Hub 生成脚本
 ├── learning-hub.html          # 生成后的静态 Hub
 └── docs/adr/                  # 关键学习系统决策
 ```
 
-`lessons/`、`notes/`、`learning-records/` 和 `reference/` 会在产生对应成果后创建，Hub 会自动读取其中的文件。
+Hub 会自动读取 `notes/` 和 `learning-records/` 中的成果。`lessons/` 只保存确有必要的补充教学材料，不是完成 Lesson 的必需产物；`reference/` 用于按需保存参考材料。
 
 ## 设计原则
 
