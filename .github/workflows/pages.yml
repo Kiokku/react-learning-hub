@@ -1,4 +1,4 @@
-name: Deploy Learning Hub to GitHub Pages
+name: Deploy React Learning Guide to GitHub Pages
 
 on:
   push:
@@ -29,10 +29,11 @@ jobs:
         with:
           node-version: 24
 
-      - name: Build site
+      - name: Build learning guide
         run: |
           node scripts/build-learning-hub.mjs
           mkdir -p _site
+          # Publish only the guide; historical notes remain in the repository archive.
           cp learning-hub.html _site/index.html
 
       - name: Configure GitHub Pages
